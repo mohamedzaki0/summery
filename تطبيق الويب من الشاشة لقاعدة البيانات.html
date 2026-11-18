@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تطبيق الويب من الشاشة لقاعدة البيانات</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@500;600;700&display=swap">
+<style>
+:root{--bg:#f4f6fb;--sf:#fff;--fg:#1a2133;--mu:#566078;--ln:#dbe0ec;--f:#0b8a85;--b:#5645d4;--d:#b86a05;--w:#c2410c;
+--fd:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;--fb:"IBM Plex Sans Arabic",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11141e;--sf:#191e2c;--fg:#e8ebf5;--mu:#9ea7bd;--ln:#2b3249;--f:#3fcac3;--b:#a093ff;--d:#f2a84d;--w:#fb923c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11141e;--sf:#191e2c;--fg:#e8ebf5;--mu:#9ea7bd;--ln:#2b3249;--f:#3fcac3;--b:#a093ff;--d:#f2a84d;--w:#fb923c;color-scheme:dark}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.8 var(--fb)}
+.page{max-width:880px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--fd);line-height:1.35;margin:0;text-wrap:balance}p{margin:0}
+h1{font-size:clamp(27px,6vw,40px)}h2{font-size:clamp(20px,4vw,25px)}h3{font-size:17px}
+.strip{display:flex;height:6px;max-width:220px;border-radius:3px;overflow:hidden}.strip i{flex:1}.strip i:nth-child(1){background:var(--f)}.strip i:nth-child(2){background:var(--b)}.strip i:nth-child(3){background:var(--d)}
+.mu{color:var(--mu);font-size:14px}.lead{font-size:18px;color:var(--mu)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:8px 0;border-bottom:1px solid var(--ln)}
+nav a{white-space:nowrap;font-size:14px;padding:2px 12px;border:1px solid var(--ln);border-radius:999px;color:var(--fg);text-decoration:none;background:var(--sf)}
+section{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:22px clamp(14px,4vw,26px);display:flex;flex-direction:column;gap:14px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.box{border:1px solid var(--ln);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tf{background:color-mix(in srgb,var(--f) 11%,var(--sf))}.tb{background:color-mix(in srgb,var(--b) 10%,var(--sf))}.td{background:color-mix(in srgb,var(--d) 11%,var(--sf))}
+.cf{color:var(--f)}.cb{color:var(--b)}.cd{color:var(--d)}.cw{color:var(--w)}
+.who{display:inline-block;font-size:13px;font-weight:600;padding:0 9px;border-radius:6px}
+.who.f{color:var(--f);background:color-mix(in srgb,var(--f) 14%,var(--sf))}.who.b{color:var(--b);background:color-mix(in srgb,var(--b) 14%,var(--sf))}.who.d{color:var(--d);background:color-mix(in srgb,var(--d) 15%,var(--sf))}
+.src{display:inline-block;font-size:12px;font-weight:600;padding:0 8px;border:1px solid var(--ln);border-radius:6px;color:var(--mu);white-space:nowrap}
+.go{font-size:14px;font-weight:600;color:var(--b);text-decoration:none;border-bottom:1px dashed currentColor}
+.go:focus-visible,nav a:focus-visible,summary:focus-visible{outline:2px solid var(--b);outline-offset:3px}
+.call{border:1px dashed var(--ln);border-radius:10px;padding:12px 14px;background:color-mix(in srgb,var(--fg) 4%,var(--sf))}
+.sc{overflow-x:auto;border:1px solid var(--ln);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px}
+th,td{padding:10px 12px;text-align:start;vertical-align:top;border-bottom:1px solid var(--ln)}tr:last-child td{border-bottom:0}
+th{font-family:var(--fd);font-size:14px;background:color-mix(in srgb,var(--fg) 6%,var(--sf))}td:first-child{font-weight:600}
+td+td,th+th{border-inline-start:1px solid var(--ln)}
+pre{margin:0;padding:12px 14px;direction:ltr;text-align:left;font:14px/1.7 ui-monospace,Menlo,Consolas,monospace;background:color-mix(in srgb,var(--fg) 4%,var(--sf));border-radius:10px;overflow-x:auto}
+.l{direction:ltr;unicode-bidi:isolate;display:inline-block}
+ul,ol{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:5px}
+details{border:1px solid var(--ln);border-radius:10px;padding:9px 14px}details+details{margin-top:8px}summary{cursor:pointer;font-weight:500}details p{margin-top:8px}
+.ok{color:var(--f);font-weight:600}.no{color:var(--w);font-weight:600}
+</style></head><body>
+<div class="page">
+<header style="display:flex;flex-direction:column;gap:12px">
+<div class="strip" aria-hidden="true"><i></i><i></i><i></i></div>
+<p class="mu">الصف الثاني بكالوريا · الفصل الثالث · ثلاثة ملفات في ملف واحد</p>
+<h1>تطبيق الويب من الشاشة لقاعدة البيانات</h1>
+<p class="lead">الملفات التلاتة بتحكي نفس الحكاية من زوايا مختلفة: <span class="src">أ · ص116</span> الطبقات، <span class="src">ب · ص130</span> الاتصال بينها، <span class="src">ج · ص144</span> التقنيات اللي بتبني الواجهة الأمامية. هنا اتجمعوا واتربطوا ببعض، وكل رابط <a class="go" href="#layers">زي ده</a> بيوديك لمكان مرتبط.</p>
+</header>
+<nav aria-label="الأقسام"><a href="#layers">الطبقات</a><a href="#kitchen">تشبيه المطعم</a><a href="#front">الأمامية من جوّه</a><a href="#comm">الاتصال</a><a href="#journey">رحلة طلب</a><a href="#map">خريطة الربط</a><a href="#units">الوحدتان</a><a href="#review">مراجعة</a></nav>
+
+<section id="layers">
+<div><span class="src">أ</span><h2>١. الصورة الكبيرة: ثلاث طبقات</h2></div>
+<p>تطبيق الويب برنامج يعمل عبر الإنترنت، وغالبًا من المتصفح. وهو في النموذج التعليمي ثلاث طبقات، ودي بتتقابل مع مصطلحات الملفين التانيين:</p>
+<div class="grid">
+<div class="box tf"><h3 class="cf">الواجهة الأمامية</h3><p>اللي بتشوفه وتتفاعل معاه.</p>
+<p class="mu">= <b>العميل</b> اللي بيبعت الطلب <span class="src">ب</span><br>= اتبنت بـ <b>HTML وCSS وJavaScript</b> <span class="src">ج</span></p><a class="go" href="#front">شوف تفاصيلها ←</a></div>
+<div class="box tb"><h3 class="cb">الواجهة الخلفية</h3><p>بتعالج الطلبات على الخادم.</p>
+<p class="mu">= <b>الخادم</b> اللي بيستقبل ويرد <span class="src">ب</span></p><a class="go" href="#comm">إزاي بتتكلم مع الأمامية ←</a></div>
+<div class="box td"><h3 class="cd">قاعدة البيانات</h3><p>بتخزن وتسترجع.</p>
+<p class="mu">الأمامية بتوصلها عن طريق الخلفية بس <span class="src">ب</span></p><a class="go" href="#journey">شوفها في رحلة طلب ←</a></div>
+</div>
+<div class="call"><b>تنبيه:</b> ده نموذج مبسط، والبنية الفعلية بتختلف من تطبيق لآخر. وملف ج بيقولها بطريقته: في أطر ومكتبات كتير مختلفة للبناء.</div>
+</section>
+
+<section id="kitchen">
+<div><span class="src">أ</span><span class="src">ب</span><span class="src">ج</span><h2>٢. تشبيه المطعم: التلات ملفات بيستخدموه</h2></div>
+<p>كل ملف اخترع تشبيهه، بس لما تجمعهم بيكوّنوا صورة واحدة:</p>
+<div class="sc"><table><thead><tr><th>الجزء</th><th>التشبيه</th><th>المصدر</th></tr></thead><tbody>
+<tr><td><span class="who f">الأمامية</span></td><td>الصالة وقائمة الطعام</td><td><span class="src">أ</span></td></tr>
+<tr><td>العميل</td><td>الزبون اللي بيطلب</td><td><span class="src">ب</span></td></tr>
+<tr><td><span class="who b">الخلفية</span> / الخادم</td><td>المطعم بمطبخه، والمطبخ هو اللي بيجهز الطلب</td><td><span class="src">أ</span><span class="src">ب</span></td></tr>
+<tr><td><span class="who d">قاعدة البيانات</span></td><td>المخزن وسجل الطلبات</td><td><span class="src">أ</span></td></tr>
+<tr><td>API</td><td>النادل: بينقل الطلب للمطبخ ويرجعلك بالنتيجة</td><td><span class="src">ب</span></td></tr>
+<tr><td>HTML / CSS / JS</td><td>تشبيه تاني من المباني: الهيكل، الديكور، الكهرباء</td><td><span class="src">ج</span></td></tr>
+</tbody></table></div>
+<div class="call"><b>خد بالك:</b> في أ المطبخ = الخلفية، وفي ب المطعم كله = الخادم. مفيش تعارض: الخادم هو المطعم، والخلفية هي الشغل اللي بيحصل في مطبخه.</div>
+</section>
+
+<section id="front">
+<div><span class="src">ج</span><span class="src">أ</span><h2>٣. الواجهة الأمامية من جوّه</h2></div>
+<p>ملف ج بيفتح الطبقة الأولى (الأمامية) ويوريك إنها تلات تقنيات. والمتصفح هو اللي بيشغّلها على جهازك، يعني هي نفس <b>العميل</b> بتاع ملف ب.</p>
+<div class="grid">
+<div class="box tf"><h3 class="cf"><span class="l">HTML</span> · البنية</h3><p>العناوين والفقرات والصور والروابط. <span class="mu">(هيكل المبنى)</span></p></div>
+<div class="box tb"><h3 class="cb"><span class="l">CSS</span> · المظهر</h3><p>الألوان والتخطيط والخطوط. <span class="mu">(الديكور)</span></p></div>
+<div class="box td"><h3 class="cd"><span class="l">JavaScript</span> · السلوك</h3><p>بتفعّل الاستجابة للضغط وبتحدّث جزء فقط من الشاشة. <span class="mu">(الكهرباء والسباكة)</span></p></div>
+</div>
+<ul>
+<li><b>HTML الدلالي</b> (<span class="l">header, nav, main, footer</span>) بيساعد قارئ الشاشة، ومش بيضمن ترتيبًا أعلى في البحث.</li>
+<li><b>التصميم المتجاوب</b>: ليه مهم؟ لأن العميل ممكن يكون كمبيوتر أو موبايل أو تابلت <span class="src">ب</span>، فالتخطيط لازم يتأقلم.</li>
+<li><b>React وVue وNext.js</b>: مكتبات وأطر بتوفر مكونات جاهزة. وNext.js بيعرض الصفحات على الخادم والعميل، يعني بيقف على الحدود بين الأمامية والخلفية.</li>
+</ul>
+<p>الخطوة اللي بعد كده: الأمامية دي بتتكلم مع الخادم إزاي؟ <a class="go" href="#comm">كمّل لقسم الاتصال ←</a></p>
+</section>
+
+<section id="comm">
+<div><span class="src">ب</span><h2>٤. الطريق بين الأمامية والخلفية</h2></div>
+<p>العميل (الأمامية) يطلب، والخادم (الخلفية) يرد، بقواعد منظمة:</p>
+<div class="sc"><table><thead><tr><th>المفهوم</th><th>معناه</th><th>بيخدم مين؟</th></tr></thead><tbody>
+<tr><td><span class="l">HTTP</span></td><td>قواعد تبادل الرسائل بين المتصفح والخادم</td><td><span class="who f">أمامية</span> ↔ <span class="who b">خلفية</span></td></tr>
+<tr><td><span class="l">HTTPS = HTTP + TLS</span></td><td>نفس القواعد في اتصال محمي: سرية، واكتشاف تلاعب، ومصادقة الخادم</td><td>نفس الطريق</td></tr>
+<tr><td><span class="l">GET</span> / <span class="l">POST</span></td><td>GET "هات لي"، وPOST "خد دي وعالجها"</td><td>الطلب من <span class="who f">الأمامية</span></td></tr>
+<tr><td>رمز الحالة <span class="l">200 / 404 / 500</span></td><td>نجاح / مورد غير موجود / عطل داخلي في الخادم</td><td>الرد من <span class="who b">الخلفية</span></td></tr>
+<tr><td><span class="l">API</span></td><td>الباب المنظم اللي الأمامية بتطلب منه من الخلفية</td><td>النادل في التشبيه</td></tr>
+<tr><td><span class="l">JSON</span></td><td>صيغة نصية منظمة (كائنات ومصفوفات وقيم بسيطة) بترجع بيها البيانات</td><td>الرد، والـ JavaScript بتقراه <span class="src">ج</span></td></tr>
+</tbody></table></div>
+<p class="mu">مثال طلب ورد:</p>
+<pre>GET /api/products?search=headphones
+
+200 OK
+{ "results": [ { "id": 101, "name": "Bluetooth Headphones", "price": 450, "inStock": true } ] }</pre>
+<div class="call"><b>انتبه:</b> HTTPS بيحمي الطريق بس، مش بيضمن إن الموقع أمين. وكل ده بيحصل بين الأمامية والخلفية، أما قاعدة البيانات فبتتعامل معاها الخلفية جوه الخادم.</div>
+<a class="go" href="#journey">دلوقتي نركّب الصورة كلها في رحلة واحدة ←</a>
+</section>
+
+<section id="journey">
+<div><span class="src">أ</span><span class="src">ب</span><span class="src">ج</span><h2>٥. رحلة طلب واحدة: البحث عن "سماعة"</h2></div>
+<p>مثال ملف أ (ص116) اتعاد بمصطلحات ب وتقنيات ج:</p>
+<div class="sc"><table><thead><tr><th>#</th><th>مين؟</th><th>اللي بيحصل</th><th>المفهوم المرتبط</th></tr></thead><tbody>
+<tr><td>1</td><td><span class="who f">أمامية</span></td><td>صندوق البحث يستقبل الكلمة، وJavaScript تلتقط الضغطة</td><td><a class="go" href="#front">HTML + JS</a></td></tr>
+<tr><td>2</td><td><span class="who f">أمامية</span> ← <span class="who b">خلفية</span></td><td>العميل يبعت طلب <span class="l">GET</span> عبر HTTPS لـ API</td><td><a class="go" href="#comm">GET وAPI</a></td></tr>
+<tr><td>3</td><td><span class="who b">خلفية</span></td><td>الخادم يستقبل الطلب ويطلب المنتجات من البيانات</td><td>داخل الخادم</td></tr>
+<tr><td>4</td><td><span class="who d">بيانات</span></td><td>ترجّع المنتجات المطابقة للخلفية</td><td>المخزن</td></tr>
+<tr><td>5</td><td><span class="who b">خلفية</span> ← <span class="who f">أمامية</span></td><td>الخادم يرد برمز <span class="l">200</span> وبيانات <span class="l">JSON</span></td><td><a class="go" href="#comm">رمز الحالة وJSON</a></td></tr>
+<tr><td>6</td><td><span class="who f">أمامية</span></td><td>JavaScript تحدّث جزء الشاشة، وHTML وCSS يعرضوا النتائج</td><td><a class="go" href="#front">الأمامية</a></td></tr>
+</tbody></table></div>
+<p class="mu">أنت بتشوف الخطوة 1 و6 بس، والباقي ورا الكواليس. ونفس المسار في "الإعجاب" بس بـ POST بدل GET: الأمامية تبعت POST، الخلفية تحدّث العداد، البيانات تحفظ، والرد 200 فيه JSON بالعداد الجديد.</p>
+</section>
+
+<section id="map">
+<div><h2>٦. خريطة الأفكار المتشابهة</h2></div>
+<p>نفس الفكرة بتظهر في أكتر من ملف بأسماء مختلفة:</p>
+<div class="sc"><table><thead><tr><th>الفكرة</th><th>أ · ص116</th><th>ب · ص130</th><th>ج · ص144</th></tr></thead><tbody>
+<tr><td>الواجهة الأمامية</td><td>الجزء اللي بتشوفه</td><td>العميل (متصفح أو تطبيق)</td><td>HTML + CSS + JS</td></tr>
+<tr><td>تحديث الشاشة</td><td>الخطوة 6: عرض النتائج</td><td>استقبال الاستجابة</td><td>JS بتحدّث جزء فقط</td></tr>
+<tr><td>اختلاف الأجهزة</td><td>تثبيت التطبيق على الجهاز</td><td>العميل ممكن يكون موبايل</td><td>التصميم المتجاوب</td></tr>
+<tr><td>البنية مش واحدة</td><td>النموذج مبسط والفعلي يختلف</td><td>وسائل اتصال تانية غير HTTP</td><td>React وVue وNext.js</td></tr>
+<tr><td>"بيساعد ولا يضمن"</td><td>—</td><td>HTTPS مش بيضمن أمانة الموقع</td><td>HTML الدلالي مش بيضمن ترتيبًا أعلى</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="units">
+<div><span class="src">ب</span><h2>٧. الربط بالوحدتين الأولى والثانية</h2></div>
+<div class="sc"><table><thead><tr><th>المفهوم</th><th>الوحدة</th><th>الربط</th></tr></thead><tbody>
+<tr><td>الحوسبة السحابية</td><td>الأولى</td><td>الخادم اللي يستقبل الطلبات غالبًا على بنية سحابية، والعميل يبعت نفس الطلب في الحالتين.</td></tr>
+<tr><td>نظام التوصية</td><td>الأولى</td><td>الخلفية تحسب الاقتراحات من البيانات وترجعها بـ JSON.</td></tr>
+<tr><td>HTTPS وTLS و2FA</td><td>الثانية</td><td>HTTPS يحمي الطريق، و2FA تحمي الحساب نفسه.</td></tr>
+<tr><td>جدار الحماية وDMZ</td><td>الثانية</td><td>الخلفية في المنطقة المعزولة، وقاعدة البيانات في شبكة داخلية خلف جدار ثانٍ.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="review">
+<h2>مراجعة موحدة</h2>
+<ul>
+<li>ثلاث طبقات: <b class="cf">أمامية</b> (العميل، مبنية بـ HTML/CSS/JS)، <b class="cb">خلفية</b> (الخادم)، <b class="cd">بيانات</b>.</li>
+<li>الأمامية تطلب بـ HTTP/HTTPS وبطريقة GET أو POST، والخلفية ترد برمز حالة وغالبًا JSON عبر API.</li>
+<li>الأمامية لا تصل للبيانات مباشرة، دايمًا عن طريق الخلفية.</li>
+</ul>
+<details><summary>أين تظهر JavaScript في رحلة البحث؟</summary><p><span class="ok">الخطوة 1 و6:</span> تلتقط الضغطة، وبعدين تحدّث جزء الشاشة بالنتائج.</p></details>
+<details><summary>الواجهة الخلفية هي الجزء الذي يراه المستخدم.</summary><p><span class="no">خطأ.</span> دي الأمامية.</p></details>
+<details><summary>HTTPS يضمن أن الموقع نفسه أمين.</summary><p><span class="no">خطأ.</span> يحمي الطريق فقط.</p></details>
+<details><summary>صفحة الدخول: أنهي طريقة طلب وأنهي بروتوكول؟ ومن يتحقق من البيانات؟</summary><p><span class="ok">POST وHTTPS</span>، والخلفية هي التي تتحقق.</p></details>
+</section>
+<p class="mu">المصادر: ص116–119 وص130–133 وص144–146، الصف الثاني بكالوريا، الفصل الثالث.</p>
+</div></body></html>
